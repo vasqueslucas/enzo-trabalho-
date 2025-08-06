@@ -8,13 +8,11 @@
     * {
       box-sizing: border-box;
     }
-
     body {
       margin: 0;
       font-family: Arial, sans-serif;
       background-color: #1c1c1c;
     }
-
     .chat-container {
       width: 100%;
       max-width: 480px;
@@ -27,7 +25,6 @@
       border-right: 1px solid #444;
       box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
     }
-
     .chat-header {
       background-color: #00796b;
       color: white;
@@ -39,7 +36,6 @@
       gap: 10px;
       border-bottom: 1px solid #004d40;
     }
-
     .chat-body {
       flex: 1;
       padding: 15px;
@@ -47,7 +43,6 @@
       display: flex;
       flex-direction: column;
     }
-
     .message {
       max-width: 80%;
       padding: 10px;
@@ -55,26 +50,22 @@
       border-radius: 8px;
       font-size: 14px;
     }
-
     .user {
       align-self: flex-end;
       background-color: #4db6ac;
       color: #000;
     }
-
     .bot {
       align-self: flex-start;
       background-color: #424242;
       color: #fff;
     }
-
     .chat-footer {
       display: flex;
       padding: 10px;
       background-color: #333;
       border-top: 1px solid #555;
     }
-
     .chat-footer input {
       flex: 1;
       padding: 10px;
@@ -85,7 +76,6 @@
       color: #fff;
       outline: none;
     }
-
     .chat-footer button {
       margin-left: 10px;
       padding: 10px 15px;
@@ -95,7 +85,6 @@
       border-radius: 20px;
       cursor: pointer;
     }
-
     .disclaimer {
       text-align: center;
       font-size: 12px;
@@ -105,25 +94,19 @@
   </style>
 </head>
 <body>
-
   <div class="chat-container">
     <div class="chat-header">
       <img src="https://img.icons8.com/ios-filled/50/ffffff/doctor-male.png" width="24" alt="icon">
       Dr.IA - Assistente Virtual de Saúde
     </div>
-
-    <div class="chat-body" id="chat-body">
-      <!-- Mensagens aparecem aqui -->
-    </div>
-
+    <div class="chat-body" id="chat-body"></div>
     <div class="chat-footer">
       <input type="text" id="user-input" placeholder="Digite sua pergunta..." />
       <button onclick="enviarMensagem()">Enviar</button>
     </div>
   </div>
-
   <div class="disclaimer">Este chat não substitui um médico.</div>
-
+  
   <script>
     const respostas = {
       "dor de cabeça": "Dor de cabeça pode ser causada por estresse, desidratação ou enxaqueca. Remédios naturais incluem chá de camomila e compressa fria. Medicamentos comuns: Dipirona, Paracetamol ou Ibuprofeno.",
@@ -154,15 +137,21 @@
       sugestoesDiv.style.padding = "10px";
       sugestoesDiv.style.backgroundColor = "#1e1e1e";
       sugestoesDiv.style.borderTop = "1px solid #444";
+      sugestoesDiv.style.justifyContent = "center";
   
       sugestoes.forEach(texto => {
         const btn = document.createElement("button");
         btn.innerText = texto;
-        btn.style.backgroundColor = "#00796b";
+        btn.style.backgroundColor = "#2196f3";
         btn.style.color = "white";
         btn.style.border = "none";
-        btn.style.padding = "8px 12px";
-        btn.style.borderRadius = "20px";
+        btn.style.padding = "10px 15px";
+        btn.style.borderRadius = "30px";
+        btn.style.fontWeight = "bold";
+        btn.style.boxShadow = "0 2px 6px rgba(0, 0, 0, 0.2)";
+        btn.style.transition = "transform 0.2s ease";
+        btn.onmouseover = () => btn.style.transform = "scale(1.05)";
+        btn.onmouseout = () => btn.style.transform = "scale(1)";
         btn.style.cursor = "pointer";
         btn.onclick = () => {
           document.getElementById("user-input").value = texto;
@@ -192,8 +181,17 @@
     function adicionarMensagem(texto, tipo) {
       const chatBody = document.getElementById("chat-body");
       const msg = document.createElement("div");
+      const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+  
       msg.className = `message ${tipo}`;
-      msg.innerText = texto;
+      msg.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <img src="${tipo === 'bot' ? 'https://img.icons8.com/ios-filled/24/doctor-male.png' : 'https://img.icons8.com/ios-filled/24/user.png'}"/>
+          <span>${texto}</span>
+        </div>
+        <div style="font-size: 10px; color: gray; text-align: right; margin-top: 2px">${time}</div>
+      `;
+      msg.style.animation = "fadeIn 0.3s ease";
       chatBody.appendChild(msg);
       chatBody.scrollTop = chatBody.scrollHeight;
     }
@@ -211,5 +209,27 @@
     }
   </script>
   
+  <style>
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  
+    @media (max-width: 600px) {
+      .chat-container {
+        width: 100%;
+        height: 100vh;
+        border: none;
+      }
+      .chat-body {
+        padding: 10px;
+      }
+      .chat-footer input {
+        font-size: 16px;
+      }
+    }
+  </style>
+  
 </body>
 </html>
+
