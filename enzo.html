@@ -5,13 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dr.IA - Assistente Virtual</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
+    body[data-theme='dark'] {
+  background-color: #1c1c1c;
+  background-image: url('https://www.transparenttextures.com/patterns/diagnosis.png');
+  background-size: cover;
+  background-repeat: repeat;
+  color: white;
+}
+    body[data-theme='light'] {
+  background-color: #f1f1f1;
+  background-image: url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+  background-size: cover;
+  background-repeat: repeat;
+  color: #222;
+}
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #1c1c1c;
+      transition: background-color 0.5s ease, color 0.5s ease;
     }
     .chat-container {
       width: 100%;
@@ -20,10 +32,9 @@
       display: flex;
       flex-direction: column;
       height: 100vh;
-      background-color: #2b2b2b;
-      border-left: 1px solid #444;
-      border-right: 1px solid #444;
-      box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+      background-color: inherit;
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
     }
     .chat-header {
       background-color: #00796b;
@@ -33,8 +44,24 @@
       font-weight: bold;
       display: flex;
       align-items: center;
-      gap: 10px;
+      justify-content: space-between;
       border-bottom: 1px solid #004d40;
+    }
+    .chat-header .title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .chat-header .title::after {
+      content: '🩺';
+      margin-left: 8px;
+    }
+    .toggle-theme {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 20px;
+      color: white;
     }
     .chat-body {
       flex: 1;
@@ -49,6 +76,7 @@
       margin: 5px 0;
       border-radius: 8px;
       font-size: 14px;
+      animation: fadeIn 0.3s ease;
     }
     .user {
       align-self: flex-end;
@@ -91,13 +119,20 @@
       color: #aaa;
       margin-top: 10px;
     }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
-<body>
+<body data-theme="dark">
   <div class="chat-container">
     <div class="chat-header">
-      <img src="https://img.icons8.com/ios-filled/50/ffffff/doctor-male.png" width="24" alt="icon">
-      Dr.IA - Assistente Virtual de Saúde
+      <div class="title">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/doctor-male.png" width="24" alt="icon">
+        Dr.IA - Assistente Virtual de Saúde
+      </div>
+      <button class="toggle-theme" onclick="alternarTema()">🌗</button>
     </div>
     <div class="chat-body" id="chat-body"></div>
     <div class="chat-footer">
@@ -106,29 +141,36 @@
     </div>
   </div>
   <div class="disclaimer">Este chat não substitui um médico.</div>
-  
+
   <script>
+    function alternarTema() {
+      const temaAtual = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', temaAtual === 'dark' ? 'light' : 'dark');
+    }
+
     const respostas = {
-      "dor de cabeça": "Dor de cabeça pode ser causada por estresse, desidratação ou enxaqueca. Remédios naturais incluem chá de camomila e compressa fria. Medicamentos comuns: Dipirona, Paracetamol ou Ibuprofeno.",
-      "febre": "A febre é uma resposta do corpo contra infecções. Remédios naturais: banho morno, hidratação e repouso. Medicamentos comuns: Paracetamol, Dipirona. Consulte um médico se a febre durar mais de 3 dias.",
-      "tosse seca": "A tosse seca pode estar relacionada a alergias ou infecções virais. Remédios naturais: mel com limão, vaporização. Medicamentos: xarope antitussígeno (como Levodropropizina ou Dropropizina).",
-      "covid": "Os sintomas de COVID-19 incluem febre, tosse, perda de olfato e paladar. Faça um teste rápido se houver suspeita. Use máscara e isole-se. Consulte o médico ao sinal de agravamento.",
-      "manchas vermelhas": "Manchas vermelhas podem ter várias causas: alergias, viroses ou dengue. Remédios naturais: banho de aveia, compressas frias. Evite coçar. Consulte um médico se aparecerem outros sintomas como febre.",
-      "dor abdominal": "Dor abdominal do lado inferior direito pode indicar apendicite. Se for intensa e acompanhada de náusea, procure atendimento médico urgente. Para cólicas leves: chá de erva-doce e compressa morna.",
-      "dor no peito": "Dor no peito pode ser algo sério. Se vier acompanhada de falta de ar, suor frio ou náusea, procure emergência. Pode ser também ansiedade ou refluxo. Evite se automedicar nesses casos.",
-      "garganta": "Dor de garganta pode ser causada por vírus ou bactérias. Remédios naturais: mel com própolis, gargarejo com água morna e sal. Medicamentos: pastilhas, anti-inflamatórios como ibuprofeno.",
-      "resfriado": "O resfriado é mais leve que a gripe e dura poucos dias. Sintomas: coriza, espirros e dor de garganta leve. Tratamentos naturais: chás quentes, repouso. Medicamentos: antitérmicos, antigripais como Benegrip ou Neosoro para o nariz.",
-      "tontura": "Tontura e fraqueza podem indicar pressão baixa, desidratação ou hipoglicemia. Coma algo leve e se hidrate. Se persistir, procure atendimento. Evite movimentos bruscos."
+      "ansiedade": "Ansiedade pode causar insônia, taquicardia e inquietação. Naturais: meditação, camomila, valeriana. Farmacêuticos: Fluoxetina, Diazepam (com prescrição médica).",
+      "depressao": "Depressão envolve tristeza persistente e desânimo. Naturais: atividades físicas, exposição solar, psicoterapia. Farmacêuticos: Sertralina, Bupropiona (com acompanhamento médico).",
+      "gripe": "Gripe é causada por vírus. Sintomas: febre, dores no corpo e coriza. Naturais: repouso, chá de gengibre e limão. Medicamentos: antitérmicos e antigripais como Benegrip.",
+      "covid-19": "COVID-19 apresenta febre, tosse e cansaço. Isolamento e teste são recomendados. Naturais: hidratação, repouso. Medicamentos: analgésicos e antitérmicos, sob orientação médica.",
+      "dor de cabeca": "Pode ser causada por estresse ou desidratação. Naturais: compressa fria, camomila. Medicamentos: Dipirona, Paracetamol.",
+      "gastrite": "Inflamação no estômago, causa dor e queimação. Naturais: batata crua, chá de espinheira-santa. Medicamentos: Omeprazol, Ranitidina.",
+      "refluxo": "Ácido retorna ao esôfago. Evite café e frituras. Naturais: chá de gengibre, alimentação leve. Medicamentos: Pantoprazol, Domperidona.",
+      "hipertensao": "Pressão alta. Evite sal e estresse. Naturais: suco de beterraba, caminhada. Medicamentos: Losartana, Enalapril (prescritos).",
+      "diabetes": "Excesso de açúcar no sangue. Controle com dieta. Naturais: canela, exercício. Medicamentos: Metformina, Insulina.",
+      "herpes genital": "Vírus que causa feridas. Naturais: própolis, lisina. Medicamentos: Aciclovir, Valaciclovir.",
+      "acne": "Cravos e espinhas. Naturais: argila verde, chá-verde. Medicamentos: Peróxido de benzoíla, Isotretinoína (prescrição).",
+      "verminose": "Causa dores abdominais. Naturais: alho, sementes de abóbora. Medicamentos: Albendazol, Mebendazol."
     };
-  
+
     const sugestoes = [
       "Estou com dor de cabeça",
-      "Tenho febre alta",
-      "Estou com tosse seca",
-      "Apareceram manchas vermelhas",
-      "Tô com tontura"
+      "Tenho sintomas de covid-19",
+      "Estou com ansiedade",
+      "O que fazer com acne?",
+      "Tenho hipertensão"
     ];
-  
+
     window.onload = () => {
       const sugestoesDiv = document.createElement("div");
       sugestoesDiv.style.display = "flex";
@@ -138,7 +180,7 @@
       sugestoesDiv.style.backgroundColor = "#1e1e1e";
       sugestoesDiv.style.borderTop = "1px solid #444";
       sugestoesDiv.style.justifyContent = "center";
-  
+
       sugestoes.forEach(texto => {
         const btn = document.createElement("button");
         btn.innerText = texto;
@@ -159,30 +201,32 @@
         };
         sugestoesDiv.appendChild(btn);
       });
-  
+
       document.body.insertBefore(sugestoesDiv, document.querySelector(".disclaimer"));
-    }
-  
+
+      adicionarMensagem("Olá! Sou o Dr.IA 🤖. Como posso te ajudar hoje?", "bot");
+    };
+
     function enviarMensagem() {
       const input = document.getElementById("user-input");
       const texto = input.value.trim();
       if (texto === "") return;
-  
+
       adicionarMensagem(texto, "user");
-  
+
       setTimeout(() => {
         const resposta = buscarResposta(texto);
         adicionarMensagem(resposta, "bot");
       }, 500);
-  
+
       input.value = "";
     }
-  
+
     function adicionarMensagem(texto, tipo) {
       const chatBody = document.getElementById("chat-body");
       const msg = document.createElement("div");
       const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-  
+
       msg.className = `message ${tipo}`;
       msg.innerHTML = `
         <div style="display: flex; align-items: center; gap: 8px;">
@@ -195,10 +239,10 @@
       chatBody.appendChild(msg);
       chatBody.scrollTop = chatBody.scrollHeight;
     }
-  
+
     function buscarResposta(pergunta) {
       pergunta = pergunta.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-  
+
       for (let chave in respostas) {
         const chaveNormalizada = chave.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
         if (pergunta.includes(chaveNormalizada)) {
@@ -208,28 +252,5 @@
       return "Desculpe, ainda não sei responder isso.";
     }
   </script>
-  
-  <style>
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-  
-    @media (max-width: 600px) {
-      .chat-container {
-        width: 100%;
-        height: 100vh;
-        border: none;
-      }
-      .chat-body {
-        padding: 10px;
-      }
-      .chat-footer input {
-        font-size: 16px;
-      }
-    }
-  </style>
-  
 </body>
 </html>
-
